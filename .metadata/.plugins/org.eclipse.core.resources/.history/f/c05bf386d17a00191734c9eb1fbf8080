@@ -1,0 +1,54 @@
+
+package block;
+import java.sql.Timestamp;
+import java.util.Scanner;
+import java.sql.Connection;
+
+class Blocko {
+	private String version;
+	private String airline;
+	private String ticketNumber;
+	private String name;
+	private double price;
+	private Timestamp tstamp;
+	private String hash=null;
+	private String prevhash=null;
+
+
+	public Blocko(String pname,String pairline,String pticket) {
+		this.version="2.00";
+		this.name=pname;
+		this.airline=pairline;
+		this.ticketNumber=pticket;
+		this.price = 0;
+		this.tstamp = new Timestamp(System.currentTimeMillis());
+		
+	}
+	private void calcHash() {
+		
+	}
+}
+
+public class bc {
+	static Connection conn=null;
+	static String sanswer=" ";
+
+	public static void main(String[] args) {
+		if (args.length<3) {
+			System.err.println("need name airline and ticket#");
+			System.exit(0);
+		}
+		Blocko bc = new Blocko(args[0],args[1],args[2]);
+		Scanner scan = new Scanner(System.in);
+		while (! sanswer.equals("e")){
+		  System.out.println("what would you like to do? s:sell ticket e:exit");
+		  sanswer = scan.nextLine();
+		  if (sanswer.equals("e")) {
+			  System.out.println("bye!\n");
+			  System.exit(0);
+		  }
+		  System.out.println("sanswer was " + sanswer);
+		}
+	}
+
+}

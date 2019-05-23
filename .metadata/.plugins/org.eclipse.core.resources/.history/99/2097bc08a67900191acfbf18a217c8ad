@@ -1,0 +1,33 @@
+
+package block;
+import java.sql.Timestamp;
+
+class Blocko {
+	private Timestamp tstamp;
+	private String name;
+	private String airline;
+	private String ticketNumber;
+	public Blocko(String pname,String pairline,String pticket) {
+		this.name=pname;
+		this.airline=pairline;
+		this.ticketNumber=pticket;
+		this.tstamp = new Timestamp(System.currentTimeMillis());
+		
+	}
+	private void calcHash() {
+		
+	}
+}
+
+public class bc {
+
+	public static void main(String[] args) {
+		if (args.length<3) {
+			System.err.println("need name airline and ticket#");
+			System.exit(0);
+		}
+		Blocko bc = new Blocko(args[0],args[1],args[2]);
+
+	}
+
+}

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="java.sql.Timestamp"/>
+<fullyQualifiedTypeName name="java.security.MessageDigest"/>
+<fullyQualifiedTypeName name="java.security.NoSuchAlgorithmException"/>
+<fullyQualifiedTypeName name="java.nio.charset.StandardCharsets"/>
+<fullyQualifiedTypeName name="java.util.ArrayList"/>
+</qualifiedTypeNameHistroy>

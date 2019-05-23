@@ -1,0 +1,14 @@
+package block;
+
+public class bc {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		if (args.length<2) {
+			System.err.println("need name and ticket#");
+			System.exit(0);
+		}
+
+	}
+
+}

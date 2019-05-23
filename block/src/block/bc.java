@@ -1,0 +1,170 @@
+
+package block;
+import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Base64;
+import java.sql.Connection;
+import java.sql.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+
+class Blocko {
+	private String version;
+	private String airline;
+	private String ticketNumber;
+	private String name;
+	private double price;
+	private Timestamp tstamp;
+	private String hash=null;
+	private String prevhash=null;
+
+
+	public Blocko(String pname,String pairline,String pticket) {
+		this.version="2.00";
+		this.name=pname;
+		this.airline=pairline;
+		this.ticketNumber=pticket;
+		this.price = 0;
+		this.tstamp = new Timestamp(System.currentTimeMillis());
+		calcHash();
+		
+	}
+	private void calcHash() {
+		String dataforhash = this.version+this.name+this.ticketNumber+this.tstamp;
+		MessageDigest digest;
+		String encoded=null;
+		try {
+			digest = MessageDigest.getInstance("SHA-256");
+			byte[] hasho=digest.digest(dataforhash.getBytes(StandardCharsets.UTF_8));
+			encoded = Base64.getEncoder().encodeToString(hasho);
+		}catch(NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		this.hash=encoded;
+		System.out.println("hash= " + this.hash);
+		
+	}
+	public String getVersion() {
+		return(this.version);
+	}
+	public String getAirline() {
+		return(this.airline);
+	}
+	public String getTicketNumber(){
+		return(this.ticketNumber);
+	}
+	public String getHash() {
+		return(this.hash);
+	}
+	public String getName() {
+		return(this.name);
+	}
+	public double getPrice() {
+		return(this.price);
+	}
+	public void setPrevhash(String h){
+		this.prevhash=h;
+	}
+	public void setPrice(double p) {
+		this.price = p;
+	}
+}
+class utility {
+	Scanner myscan;
+	public utility(Scanner iscan){
+		this.myscan = iscan;
+	}
+	protected Connection createConnection() {
+		Connection conna=null;
+		try{  
+			//Class.forName("com.mysql.jdbc.Driver"); 
+			conna=DriverManager.getConnection(  
+			"jdbc:mysql://localhost:3306/blockchain?serverTimezone=EST5EDT","root","h3ckl3r");
+			}catch(Exception e){ System.out.println(e);}  
+		    return(conna);
+			}  
+
+		
+	protected void sellTheTicket(ArrayList ain,Scanner scan) {
+		String buyerName=null;
+		Blocko currentblock=null;
+		String currenthash=null;
+		String tcknumber=null;
+		String nairline=null;
+		double nprice=0;
+		int len=0;
+		len = ain.size();
+		String vversion=null;
+		String aairlibe=null;
+		String tticket=null;
+		currentblock=(Blocko)ain.get(len-1);
+		currenthash=currentblock.getHash();
+		tticket = currentblock.getTicketNumber();
+		nairline =currentblock.getAirline();
+		nprice = currentblock.getPrice();
+		System.out.println("currenthash = " + currenthash);
+		System.out.println("in utility sell the ticket");
+		System.out.println("enter name of buyer");
+		buyerName=scan.nextLine();
+		Blocko newblock = new Blocko(buyerName,tticket,nairline);
+		newblock.setPrevhash(currenthash);
+		newblock.setPrice(nprice);
+		ain.add(newblock);
+	}
+	protected void listTheChain(ArrayList ain) {
+		System.out.println("in list the chain");
+	}
+	protected void saveAsJSON(ArrayList aa,Connection conn) {
+		
+	}
+	protected void testConnection(Connection conn) {
+		try {
+		  java.sql.Statement stmt = conn.createStatement();
+		  ResultSet rs = stmt.executeQuery("select a from testo");
+		  while(rs.next()) {
+			System.out.println(rs.getString("a"));
+		}
+		}catch(Exception ee){
+			System.out.println("in testConnection " + ee.toString());
+		}
+	}
+}
+
+public class bc {
+	static Connection conn=null;
+	static String sanswer=" ";
+	static String nameo=null;
+
+	public static void main(String[] args) {
+		ArrayList bchain=null;
+		Scanner scan=null;
+		if (args.length<3) {
+			System.err.println("need name airline and ticket#");
+			System.exit(0);
+		}
+		// Create the first block... initial sale of ticket
+		Blocko bc = new Blocko(args[0],args[1],args[2]);
+		bchain = new ArrayList(10);
+		bchain.add(bc);
+		scan = new Scanner(System.in);
+		utility u = new utility(scan);
+		conn = u.createConnection();
+	//	u.testConnection(conn);
+		while (! sanswer.equals("e")){
+		  System.out.println("what would you like to do? s:sell ticket e:exit list chain:l");
+		  sanswer = scan.nextLine();
+		  if (sanswer.equals("e")) {
+			  System.out.println("bye! I will save what i have");
+			  u.saveAsJSON(bchain,conn);
+			  System.exit(0);
+		  }
+		  if (sanswer.equals("s")) {
+		  	u.sellTheTicket(bchain,scan);
+	      } 
+	}
+  }
+	
+}
